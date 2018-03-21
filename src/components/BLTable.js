@@ -1,33 +1,48 @@
 import React, { Component, Fragment } from 'react';
 
+// Styles
+import { Cell, CellHead, Table, BodyRow } from '../styles/BLTable';
+
 const GetTable = (props) => {
     return (
-        <table>
-            <thead>
-                <tr>
-                    <th>Team</th>
-                    <th>Spiele</th>
-                    <th>Gewonnen</th>
-                    <th>Unentschieden</th>
-                    <th>Verloren</th>
-                    <th>Tor-Differenz</th>
-                    <th>Punkte</th>
-                </tr>
-            </thead>
+        <Table>
             <tbody>
-                {props.data.map((team, i) => (
-                    <tr key={i}>
-                        <th>{team.TeamName}</th>
-                        <th>{team.Matches}</th>
-                        <th>{team.Won}</th>
-                        <th>{team.Draw}</th>
-                        <th>{team.Lost}</th>
-                        <th>{team.GoalDiff}</th>
-                        <th>{team.Points}</th>
-                    </tr>
-                ))}
+                <tr>
+                    <CellHead>Platz</CellHead>
+                    <CellHead>Team</CellHead>
+                    <CellHead>Spiele</CellHead>
+                    <CellHead>Gewonnen</CellHead>
+                    <CellHead>Unentschieden</CellHead>
+                    <CellHead>Verloren</CellHead>
+                    <CellHead>Tor-Differenz</CellHead>
+                    <CellHead>Punkte</CellHead>
+                </tr>
+                {props.data.map((team, i) => {
+                    let league;
+                    if(i <= 3) {
+                        league = 'cl';
+                    } else if(i > 3 && i <= 5) {
+                        league = 'eu';
+                    } else if(i === 15) {
+                        league = 'rel';
+                    } else if(i >= 16) {
+                        league = 'abst';
+                    }
+                    return (
+                        <BodyRow key={i} league={league}>
+                            <Cell>{i+1}</Cell>
+                            <Cell>{team.TeamName}</Cell>
+                            <Cell>{team.Matches}</Cell>
+                            <Cell>{team.Won}</Cell>
+                            <Cell>{team.Draw}</Cell>
+                            <Cell>{team.Lost}</Cell>
+                            <Cell>{team.GoalDiff}</Cell>
+                            <Cell>{team.Points}</Cell>
+                        </BodyRow>
+                    );
+                })}
             </tbody>
-        </table>
+        </Table>
     );
 }
 
@@ -76,23 +91,12 @@ class BLTable extends Component {
         }
 
         fetchData(year);
-
-        /* let res = fetchData(year);
-        console.log(res);
-        if(!res) res = fetchData(year - 1);
-        if(!res) return this.setState({ data: null });
-        console.log('Res ', res);
-        if(res.length > 0) {
-            this.setState({ data: res });
-        } else {
-            this.setState({data: null});
-        } */
     }
     
     render() {
         return (
             <Fragment>
-                {!this.state.data ? <p>No data...</p> : <GetTable data={this.state.data}/>}
+                {!this.state.data ? <p>Loading...</p> : <GetTable data={this.state.data}/>}
             </Fragment>
         );
     }
